@@ -1,0 +1,24 @@
+*{
+
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #444;
+    background-color: #312964;
+}
+
+.card{
+    height: 280px;
+    width: 310px;
+    background-color: #87ecfa;
+    border-radius: 10%;
+    padding: 30px;
+}
+
+.cardHolder{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
