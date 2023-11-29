@@ -1,3 +1,4 @@
+from sqlalchemy.orm import backref
 from app import db, login_manager
 from flask_login import UserMixin
 
@@ -24,3 +25,53 @@ class Clientes(db.Model, UserMixin):
 
     def get_id(self):
         return (self.cliente_id)
+
+
+class Emprestimos(db.Model, UserMixin):
+    __tablename__ = "emprestimos"
+    emprestimo_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    cliente_id = db.Column(db.Integer, db.ForeignKey("clientes.cliente_id"))
+    relation = db.relationship("Clientes", backref=backref("clientes", uselist=False))
+    valor = db.Column(db.Double, nullable=False)
+    taxa = db.Column(db.Double, nullable=False)
+    n_parcelas = db.Column(db.Integer, nullable=False)
+    parcela_atual = db.Column(db.Integer, nullable=False)
+    data_inicio = db.Column(db.String(10), nullable=False)
+
+
+    def __init__(self, emprestimo_id, cliente_id, valor, taxa, n_parcelas, parcela_atual, data_inicio):
+        self.emprestimo_id = emprestimo_id
+        self.cliente_id = cliente_id
+        self.valor = valor
+        self.taxa = taxa
+        self.n_parcelas = n_parcelas
+        self.parcela_atual = parcela_atual
+        self.data_inicio = data_inicio
+
+    def get_id(self):
+        return (self.emprestimo_id)
+
+    # Getter para cliente_id
+    def get_cliente_id(self):
+        return self.cliente_id
+
+    # Getter para valor
+    def get_valor(self):
+        return self.valor
+
+    def get_taxa(self):
+        return self.taxa
+
+    # Getter para n_parcelas
+    def get_n_parcelas(self):
+        return self.n_parcelas
+
+    # Getter para parcela_atual
+    def get_parcela_atual(self):
+        return self.parcela_atual
+
+    # Getter para data_inicio
+    def get_data(self):
+        return self.data_inicio
+
+
