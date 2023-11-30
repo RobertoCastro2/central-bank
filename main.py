@@ -16,10 +16,11 @@ def cadastro():
                 email = request.form['email']
                 senha = request.form['senha']
 
-                cliente = Clientes(email, senha, nome, cpf)
-                db.session.add(cliente)
-                db.session.commit()
-                return redirect(url_for('login'))
+                if cpf < '99999999999' and len(email) <= 30 and len(senha) <= 20 and len(nome) <= 30:
+                    cliente = Clientes(email, senha, nome, cpf)
+                    db.session.add(cliente)
+                    db.session.commit()
+                    return redirect(url_for('login'))
 
         return render_template('cadastro.html')
 
@@ -69,12 +70,7 @@ def efetuar_emprestimo():
     return render_template('emprestimo_novo.html')
 
 
-# self.cliente_id = cliente_id
-# self.valor = valor
-# self.taxa = taxa
-# self.n_parcelas = n_parcelas
-# self.parcela_atual = parcela_atual
-# self.data_inicio = data_inicio
+
 
 @app.route('/emprestimos')
 def emprestimos():
@@ -82,7 +78,7 @@ def emprestimos():
     db.session.commit()
     emprestimo = Emprestimos.verificar_emprestimo(Emprestimos,id)
     if emprestimo:
-        return render_template('emprestimo.html',total = emprestimo.get('valor'), taxa= emprestimo.get('taxa'), custo_mensal= emprestimo.get('custo_mensal'), data=emprestimo.get('data_inicio'))
+        return render_template('emprestimo.html',total = emprestimo.get('valor'), taxa= emprestimo.get('taxa')*100, custo_mensal= emprestimo.get('custo_mensal'), data=emprestimo.get('data_inicio'),total_a_pagar=emprestimo.get('total_a_pagar'))
     else:
       return redirect('emprestimo/novo')
 

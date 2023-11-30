@@ -81,7 +81,7 @@ class Emprestimos(db.Model, UserMixin):
         while saldo != 0:
             juros = saldo * taxa
             saldo = saldo - arrebate
-
+            valor_total = valor_total + juros + arrebate
         custo_mensal.append(juros + arrebate)
         return custo_mensal
 
