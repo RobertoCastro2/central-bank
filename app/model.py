@@ -39,8 +39,7 @@ class Emprestimos(db.Model, UserMixin):
     data_inicio = db.Column(db.String(10), nullable=False)
 
 
-    def __init__(self, emprestimo_id, cliente_id, valor, taxa, n_parcelas, parcela_atual, data_inicio):
-        self.emprestimo_id = emprestimo_id
+    def __init__(self, cliente_id, valor, taxa, n_parcelas, parcela_atual, data_inicio):
         self.cliente_id = cliente_id
         self.valor = valor
         self.taxa = taxa

@@ -5,9 +5,26 @@
     <title>Title</title>
 </head>
 <body>
+<h1>Informacoens sobre o Emprestimo</h1>
 <div>
-<label>Sucesso?</label>
+    <div>
+            <label>Valor Total: {{total}}</label>
+    </div>
+    <div>
+      <label>Valor que falta pagar: {{nsei}}</label>
+    </div>
+    <div>
+      <label>Valor de cada parcela: {{custo_mensal}}</label>
+    </div>
+    <div>
+      <label>data de inicio: {{data}}</label>
+    </div>
+    <div>
+        <label>Taxa: {{taxa}}%</label>
+    </div>
 </div>
+    <button onclick="{window.location.href = '/menu'}">Voltar ao menu</button>
+
 
 </body>
 </html>

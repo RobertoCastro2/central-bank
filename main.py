@@ -4,6 +4,7 @@ from flask_login.utils import _get_user
 
 from app import app, db
 from app.model import Clientes, Emprestimos
+from datetime import date
 
 
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -38,7 +39,7 @@ def login():
                 return redirect(url_for('menu'))
         return render_template('login.html')
 
-@app.route('/logout')
+@app.route('/deslogar')
 def logout():
         logout_user()
         return redirect(url_for('login'))
@@ -48,17 +49,42 @@ def logout():
 def menu():
     return render_template('menu.html')
 
+@app.route('/emprestimo/novo', methods=['GET', 'POST'])
+def efetuar_emprestimo():
+    if request.method == 'POST':
+        cliente_id = db.session.execute(_get_user()).fetchall()[0][0].get_id()
+        db.session.commit()
+
+        valor = request.form['valor']
+        taxa = 0.0895
+        n_parcelas = request.form['n_parcelas']
+        parcela_atual = 0
+        data_inicio = date.today()
+
+
+        emprestimos = Emprestimos(cliente_id, valor, taxa, n_parcelas, parcela_atual,data_inicio)
+        db.session.add(emprestimos)
+        db.session.commit()
+        return redirect(url_for('emprestimos'))
+    return render_template('emprestimo_novo.html')
+
+
+# self.cliente_id = cliente_id
+# self.valor = valor
+# self.taxa = taxa
+# self.n_parcelas = n_parcelas
+# self.parcela_atual = parcela_atual
+# self.data_inicio = data_inicio
 
 @app.route('/emprestimos')
 def emprestimos():
     id = db.session.execute(_get_user()).fetchall()[0][0].get_id()
     db.session.commit()
-
-    if Emprestimos.verificar_emprestimo(Emprestimos,id):
-        # return render_template('login.html')
-        return render_template('emprestimo.html')
+    emprestimo = Emprestimos.verificar_emprestimo(Emprestimos,id)
+    if emprestimo:
+        return render_template('emprestimo.html',total = emprestimo.get('valor'), taxa= emprestimo.get('taxa'), custo_mensal= emprestimo.get('custo_mensal'), data=emprestimo.get('data_inicio'))
     else:
-      return render_template('emprestimo_novo.html')
+      return redirect('emprestimo/novo')
 
 
 @app.route('/emprestimos_cliente')
