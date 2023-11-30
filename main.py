@@ -48,41 +48,27 @@ def logout():
 def menu():
     return render_template('menu.html')
 
-def calcular_parcelas(valor, taxa, n_parcelas, parcela_atual):
-    saldo = valor
-    arrebate = valor/n_parcelas
-    custo_mensal = []
-    while saldo != 0:
-        juros = saldo*taxa
-        custo_mensal.append(juros+arrebate)
-        print(juros)
-        saldo = saldo-arrebate
 
-    return custo_mensal
-def verificar_emprestimo():
-    print(_get_user())
-    user_id = db.session.execute(_get_user()).fetchall()[0][0].get_id()
-    db.session.commit()
-    print(user_id)
-    emprestimo = Emprestimos.query.filter_by(cliente_id=user_id).first()
-    print(emprestimo)
-    if emprestimo != None:
-        valor = float(emprestimo.get_valor())
-        taxa = float(emprestimo.get_taxa())
-        data_inicio = emprestimo.get_data()
-        n_parcelas = int(emprestimo.get_n_parcelas())
-        parcela_atual = int(emprestimo.get_parcela_atual())
-        parcelas = calcular_parcelas(valor, taxa, n_parcelas, parcela_atual)
-        return parcelas
-    else:
-        return False
 @app.route('/emprestimos')
 def emprestimos():
-    if verificar_emprestimo():
-        return render_template('login.html')
-        # return render_template('pagina_emprestimos_cliente.html')
+    id = db.session.execute(_get_user()).fetchall()[0][0].get_id()
+    db.session.commit()
+
+    if Emprestimos.verificar_emprestimo(Emprestimos,id):
+        # return render_template('login.html')
+        return render_template('emprestimo.html')
     else:
-      return render_template('menu.html')
+      return render_template('emprestimo_novo.html')
+
+
+@app.route('/emprestimos_cliente')
+def cliente_emprestimo():
+    return render_template('/emprestimo.html')
+
+@app.route('/emprestimos_novo')
+def cliente_novo_emprestimo():
+    return render_template('/emprestimo_novo.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)

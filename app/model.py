@@ -74,4 +74,33 @@ class Emprestimos(db.Model, UserMixin):
     def get_data(self):
         return self.data_inicio
 
+    def calcular_parcelas(self, valor, taxa, n_parcelas, parcela_atual):
+        valor = (valor / n_parcelas) * (n_parcelas - parcela_atual)
+        saldo = valor
+        arrebate = valor / n_parcelas
+        custo_mensal = []
+        while saldo != 0:
+            juros = saldo * taxa
+            saldo = saldo - arrebate
+
+        custo_mensal.append(juros + arrebate)
+        return custo_mensal
+
+    def verificar_emprestimo(self, user_id):
+        emprestimo = Emprestimos.query.filter_by(cliente_id=user_id).first()
+
+        if emprestimo != None:
+           valor = float(emprestimo.get_valor())
+           taxa = float(emprestimo.get_taxa())
+           data_inicio = emprestimo.get_data()
+           n_parcelas = int(emprestimo.get_n_parcelas())
+           parcela_atual = int(emprestimo.get_parcela_atual())
+           custo_mensal = emprestimo.calcular_parcelas(valor, taxa, n_parcelas, parcela_atual)
+
+           dados_emprestimo = {"valor": valor, "taxa": taxa, "data_inicio": data_inicio, "n_parcelas": n_parcelas,
+                                   "parcela_atual": parcela_atual, "custo_mensal": custo_mensal}
+
+           return dados_emprestimo
+        else:
+           return False
 
