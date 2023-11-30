@@ -91,6 +91,10 @@ def cliente_emprestimo():
 def cliente_novo_emprestimo():
     return render_template('/emprestimo_novo.html')
 
+@app.route('/')
+def rerout():
+    return redirect(url_for('login'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

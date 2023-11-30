@@ -1,7 +1,7 @@
 from sqlalchemy.orm import backref
 from app import db, login_manager
 from flask_login import UserMixin
-
+import math
 @login_manager.user_loader
 def get_cliente(cliente_id):
     return Clientes.query.filter_by(cliente_id=cliente_id)
@@ -22,6 +22,9 @@ class Clientes(db.Model, UserMixin):
 
     def verify_password(self,senha ):
         return self.cliente_senha == senha
+
+    def get_nome(self):
+        return(self.cliente_nome)
 
     def get_id(self):
         return (self.cliente_id)
@@ -81,13 +84,11 @@ class Emprestimos(db.Model, UserMixin):
         while saldo != 0:
             juros = saldo * taxa
             saldo = saldo - arrebate
-            valor_total = valor_total + juros + arrebate
-        custo_mensal.append(juros + arrebate)
+            custo_mensal.append((math.floor((juros + arrebate)*100)/100))
         return custo_mensal
 
     def verificar_emprestimo(self, user_id):
         emprestimo = Emprestimos.query.filter_by(cliente_id=user_id).first()
-
         if emprestimo != None:
            valor = float(emprestimo.get_valor())
            taxa = float(emprestimo.get_taxa())
@@ -95,9 +96,10 @@ class Emprestimos(db.Model, UserMixin):
            n_parcelas = int(emprestimo.get_n_parcelas())
            parcela_atual = int(emprestimo.get_parcela_atual())
            custo_mensal = emprestimo.calcular_parcelas(valor, taxa, n_parcelas, parcela_atual)
+           valor_total = sum(custo_mensal)
 
            dados_emprestimo = {"valor": valor, "taxa": taxa, "data_inicio": data_inicio, "n_parcelas": n_parcelas,
-                                   "parcela_atual": parcela_atual, "custo_mensal": custo_mensal}
+                                   "parcela_atual": parcela_atual, "custo_mensal": custo_mensal, "total_a_pagar": valor_total}
 
            return dados_emprestimo
         else:
